@@ -1,192 +1,265 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0f172a">
-  <title>Kalkulator Diskon</title>
+  <title>Kalkulator Diskon & Pajak</title>
   <style>
-    :root {
-      color-scheme: dark;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #0f172a;
-      color: #f8fafc;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    * { box-sizing: border-box; }
-
     body {
-      display: grid;
-      place-items: center;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #0b1329;
+      color: #e2e8f0;
       min-height: 100vh;
-      margin: 0;
-      padding: 24px;
-      background: radial-gradient(circle at top, #1e3a5f 0, #0f172a 45%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
     }
 
     .card {
-      width: min(100%, 400px);
-      padding: 28px;
-      border: 1px solid rgba(148, 163, 184, 0.18);
+      background-color: #1e293b;
+      border: 1px solid #334155;
       border-radius: 16px;
-      background: rgba(30, 41, 59, 0.94);
-      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.32);
+      padding: 28px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
     }
 
-    h1 {
-      margin: 0;
+    h2 {
       font-size: 1.5rem;
-      line-height: 1.25;
       text-align: center;
+      margin-bottom: 6px;
+      color: #ffffff;
     }
 
-    .subtitle {
-      margin: 8px 0 24px;
+    p.subtitle {
+      font-size: 0.875rem;
       color: #94a3b8;
-      font-size: 0.9375rem;
       text-align: center;
+      margin-bottom: 24px;
     }
 
-    .input-group { margin-bottom: 18px; }
+    .form-group {
+      margin-bottom: 16px;
+    }
 
     label {
       display: block;
-      margin-bottom: 7px;
-      color: #cbd5e1;
       font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+      color: #cbd5e1;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .prefix {
+      position: absolute;
+      left: 12px;
+      color: #64748b;
+      font-size: 0.95rem;
       font-weight: 600;
+      pointer-events: none;
     }
 
     input {
       width: 100%;
-      padding: 12px;
-      border: 1px solid #475569;
+      background-color: #0f172a;
+      border: 1px solid #334155;
       border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 1rem;
+      color: #ffffff;
       outline: none;
-      background: #0f172a;
-      color: #f8fafc;
-      font: inherit;
+      transition: border-color 0.2s;
     }
 
-    input::placeholder { color: #64748b; }
-    input:focus { border-color: #38bdf8; box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.18); }
+    input.has-prefix {
+      padding-left: 42px;
+    }
+
+    input:focus {
+      border-color: #3b82f6;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
 
     button {
-      width: 100%;
+      flex: 1;
       padding: 12px;
-      border: 0;
+      border: none;
       border-radius: 8px;
-      background: #2563eb;
-      color: #fff;
-      font: inherit;
-      font-weight: 700;
+      font-size: 0.95rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: background-color 150ms ease, transform 150ms ease;
+      transition: background-color 0.2s;
     }
 
-    button:hover { background: #1d4ed8; }
-    button:active { transform: translateY(1px); }
-    button:focus-visible { outline: 3px solid #7dd3fc; outline-offset: 3px; }
-
-    .error {
-      min-height: 1.3em;
-      margin: 12px 0 0;
-      color: #fda4af;
-      font-size: 0.875rem;
+    .btn-calculate {
+      background-color: #2563eb;
+      color: #ffffff;
     }
 
-    .result {
-      margin-top: 20px;
-      padding-top: 18px;
-      border-top: 1px solid #475569;
+    .btn-calculate:hover {
+      background-color: #1d4ed8;
     }
 
-    .result[hidden] { display: none; }
-
-    .result p {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      margin: 8px 0;
+    .btn-reset {
+      background-color: #334155;
       color: #cbd5e1;
     }
 
-    .result span { font-variant-numeric: tabular-nums; }
-    .total { color: #7dd3fc !important; font-size: 1.0625rem; font-weight: 800; }
+    .btn-reset:hover {
+      background-color: #475569;
+    }
 
-    @media (max-width: 420px) {
-      body { padding: 16px; }
-      .card { padding: 24px 20px; }
+    .result-box {
+      margin-top: 24px;
+      padding-top: 18px;
+      border-top: 1px solid #334155;
+      display: none;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+      color: #cbd5e1;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px dashed #334155;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #38bdf8;
     }
   </style>
 </head>
 <body>
-  <main class="card">
-    <h1>Kalkulator Diskon</h1>
-    <p class="subtitle">Hitung harga akhir setelah potongan diskon.</p>
 
-    <form id="discountForm" novalidate>
-      <div class="input-group">
-        <label for="price">Harga Asli (Rp)</label>
-        <input type="number" id="price" name="price" min="0" step="any" inputmode="decimal" placeholder="Misal: 100000" required>
+  <div class="card">
+    <h2>Kalkulator Diskon</h2>
+    <p class="subtitle">Hitung potongan diskon dan pajak belanjaan</p>
+
+    <!-- Input Harga Asli -->
+    <div class="form-group">
+      <label for="displayPrice">Harga Asli (Rp)</label>
+      <div class="input-wrapper">
+        <span class="prefix">Rp</span>
+        <input type="text" id="displayPrice" class="has-prefix" placeholder="Misal: 50.000" inputmode="numeric" oninput="formatRupiahInput(this)">
       </div>
+    </div>
 
-      <div class="input-group">
-        <label for="discount">Diskon (%)</label>
-        <input type="number" id="discount" name="discount" min="0" max="100" step="any" inputmode="decimal" placeholder="Misal: 20" required>
+    <!-- Input Diskon -->
+    <div class="form-group">
+      <label for="discount">Diskon (%)</label>
+      <input type="number" id="discount" placeholder="Misal: 15" min="0" max="100">
+    </div>
+
+    <!-- Input Pajak / PPN -->
+    <div class="form-group">
+      <label for="tax">Pajak / PPN (%) <span style="font-size: 0.75rem; color: #64748b;">(Opsional)</span></label>
+      <input type="number" id="tax" placeholder="Misal: 11" min="0" value="0">
+    </div>
+
+    <div class="btn-group">
+      <button class="btn-reset" onclick="resetForm()">Reset</button>
+      <button class="btn-calculate" onclick="hitungSemua()">Hitung Total</button>
+    </div>
+
+    <!-- Bagian Hasil Hitung -->
+    <div class="result-box" id="resultArea">
+      <div class="row">
+        <span>Harga Awal:</span>
+        <span id="resOriginal">Rp 0</span>
       </div>
-
-      <button type="submit">Hitung Total</button>
-      <p class="error" id="errorMessage" role="alert" aria-live="polite"></p>
-    </form>
-
-    <section class="result" id="resultArea" hidden aria-live="polite" aria-label="Hasil perhitungan">
-      <p>Potongan: <span id="discountAmount">Rp0</span></p>
-      <p class="total">Total Bayar: <span id="finalPrice">Rp0</span></p>
-    </section>
-  </main>
+      <div class="row">
+        <span>Potongan Diskon:</span>
+        <span id="resDiscount" style="color: #4ade80;">- Rp 0</span>
+      </div>
+      <div class="row">
+        <span>Pajak Tambahan:</span>
+        <span id="resTax" style="color: #f87171;">+ Rp 0</span>
+      </div>
+      <div class="total-row">
+        <span>Total Bayar:</span>
+        <span id="resTotal">Rp 0</span>
+      </div>
+    </div>
+  </div>
 
   <script>
-    const form = document.getElementById('discountForm');
-    const priceInput = document.getElementById('price');
-    const discountInput = document.getElementById('discount');
-    const resultArea = document.getElementById('resultArea');
-    const errorMessage = document.getElementById('errorMessage');
-    const formatter = new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      maximumFractionDigits: 2
-    });
-
-    function formatRupiah(value) {
-      return formatter.format(value).replace(/\s/g, '');
+    // Fungsi agar saat mengetik harga otomatis muncul titik ribuan
+    function formatRupiahInput(input) {
+      let angka = input.value.replace(/[^0-9]/g, '');
+      if (!angka) {
+        input.value = '';
+        return;
+      }
+      input.value = new Intl.NumberFormat('id-ID').format(angka);
     }
 
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      const price = Number(priceInput.value);
-      const discount = Number(discountInput.value);
+    function ambilAngkaMurni(text) {
+      return parseFloat(text.replace(/\./g, '')) || 0;
+    }
 
-      if (!priceInput.value || !discountInput.value || !Number.isFinite(price) || !Number.isFinite(discount)) {
-        errorMessage.textContent = 'Masukkan harga dan diskon terlebih dahulu.';
-        resultArea.hidden = true;
+    function hitungSemua() {
+      const hargaAsli = ambilAngkaMurni(document.getElementById('displayPrice').value);
+      const diskonPersen = parseFloat(document.getElementById('discount').value) || 0;
+      const pajakPersen = parseFloat(document.getElementById('tax').value) || 0;
+
+      if (hargaAsli <= 0) {
+        alert('Harap masukkan harga asli terlebih dahulu!');
         return;
       }
 
-      if (price < 0 || discount < 0 || discount > 100) {
-        errorMessage.textContent = 'Harga tidak boleh negatif dan diskon harus antara 0–100%.';
-        resultArea.hidden = true;
-        return;
-      }
+      // 1. Hitung potongan diskon
+      const nominalDiskon = hargaAsli * (diskonPersen / 100);
+      const hargaSetelahDiskon = hargaAsli - nominalDiskon;
 
-      const discountAmount = price * (discount / 100);
-      const finalPrice = price - discountAmount;
+      // 2. Hitung pajak dari harga yang sudah didiskon
+      const nominalPajak = hargaSetelahDiskon * (pajakPersen / 100);
 
-      document.getElementById('discountAmount').textContent = formatRupiah(discountAmount);
-      document.getElementById('finalPrice').textContent = formatRupiah(finalPrice);
-      errorMessage.textContent = '';
-      resultArea.hidden = false;
-    });
+      // 3. Hitung total akhir
+      const totalBayar = hargaSetelahDiskon + nominalPajak;
+
+      // Format ke tampilan Rupiah
+      const formatRupiah = (val) => 'Rp ' + Math.round(val).toLocaleString('id-ID');
+
+      document.getElementById('resOriginal').innerText = formatRupiah(hargaAsli);
+      document.getElementById('resDiscount').innerText = '- ' + formatRupiah(nominalDiskon);
+      document.getElementById('resTax').innerText = '+ ' + formatRupiah(nominalPajak);
+      document.getElementById('resTotal').innerText = formatRupiah(totalBayar);
+
+      document.getElementById('resultArea').style.display = 'block';
+    }
+
+    function resetForm() {
+      document.getElementById('displayPrice').value = '';
+      document.getElementById('discount').value = '';
+      document.getElementById('tax').value = '0';
+      document.getElementById('resultArea').style.display = 'none';
+    }
   </script>
 </body>
 </html>
