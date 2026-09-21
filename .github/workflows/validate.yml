@@ -1,0 +1,20 @@
+name: Validate Foundation
+
+on:
+  pull_request:
+  push:
+    branches:
+      - work
+
+permissions:
+  contents: read
+
+jobs:
+  foundation:
+    name: Validate reusable foundation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Run foundation validation
+        run: bash scripts/validate-foundation.sh
