@@ -1,265 +1,1189 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kalkulator Diskon & Pajak</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Memo</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #000000;
+    --panel: #080808;
+    --panel-2: #101010;
+    --panel-3: #151515;
+    --border: #ffffff;
+    --border-soft: #333333;
+    --text: #ffffff;
+    --text-soft: #aaaaaa;
+    --accent: #1677ff;
+    --danger: #ff3b3b;
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+.app {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+    height: 64px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 20px;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.header-search {
+    flex: 1;
+    max-width: 600px;
+}
+
+.header-search input {
+    width: 100%;
+    background: var(--panel-2);
+    color: white;
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 11px 14px;
+    outline: none;
+}
+
+.header-search input:focus {
+    border-color: var(--border);
+}
+
+.header-button {
+    background: transparent;
+    color: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 9px 14px;
+}
+
+/* =========================
+   MAIN LAYOUT
+========================= */
+
+.main {
+    flex: 1;
+    display: flex;
+    min-height: calc(100vh - 64px);
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.sidebar {
+    width: 250px;
+    border-right: 1px solid var(--border);
+    padding: 20px;
+    flex-shrink: 0;
+}
+
+.sidebar-title {
+    font-size: 14px;
+    color: var(--text-soft);
+    margin-bottom: 10px;
+}
+
+.folder-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.folder-item {
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    color: white;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    padding: 10px 12px;
+}
+
+.folder-item:hover {
+    border-color: var(--border-soft);
+    background: var(--panel-2);
+}
+
+.folder-item.active {
+    border-color: var(--border);
+    background: var(--panel-3);
+}
+
+.new-folder {
+    width: 100%;
+    margin-top: 15px;
+    background: transparent;
+    color: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.content {
+    flex: 1;
+    padding: 24px;
+    min-width: 0;
+}
+
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.content-title {
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.content-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.primary-button {
+    background: var(--accent);
+    color: white;
+    border: 1px solid var(--accent);
+    border-radius: 8px;
+    padding: 10px 16px;
+}
+
+.secondary-button {
+    background: transparent;
+    color: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+}
+
+/* =========================
+   SORT
+========================= */
+
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.toolbar input {
+    flex: 1;
+    max-width: 500px;
+    background: var(--panel-2);
+    color: white;
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 11px 14px;
+    outline: none;
+}
+
+.sort-select {
+    background: var(--panel-2);
+    color: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+}
+
+/* =========================
+   MEMO LIST
+========================= */
+
+.memo-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 14px;
+}
+
+.memo-card {
+    background: var(--panel);
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    padding: 16px;
+    min-height: 150px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: 0.15s;
+}
+
+.memo-card:hover {
+    border-color: var(--border);
+}
+
+.memo-top {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.memo-title {
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.pin {
+    color: #ffd000;
+}
+
+.memo-preview {
+    color: var(--text-soft);
+    line-height: 1.5;
+    flex: 1;
+}
+
+.memo-meta {
+    color: #777777;
+    font-size: 12px;
+}
+
+.memo-actions {
+    display: flex;
+    gap: 7px;
+    margin-top: 5px;
+}
+
+.small-button {
+    flex: 1;
+    background: transparent;
+    color: white;
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    padding: 7px;
+}
+
+.small-button:hover {
+    border-color: white;
+}
+
+.delete-button:hover {
+    border-color: var(--danger);
+    color: var(--danger);
+}
+
+/* =========================
+   EMPTY STATE
+========================= */
+
+.empty {
+    border: 1px dashed var(--border-soft);
+    border-radius: 10px;
+    padding: 50px 20px;
+    text-align: center;
+    color: var(--text-soft);
+}
+
+/* =========================
+   MODAL
+========================= */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.82);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 100;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-box {
+    width: 100%;
+    max-width: 650px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #050505;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-title {
+    font-size: 21px;
+    font-weight: bold;
+}
+
+.close-button {
+    background: transparent;
+    color: white;
+    border: 1px solid var(--border-soft);
+    border-radius: 6px;
+    padding: 6px 10px;
+}
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+.form-group label {
+    display: block;
+    color: var(--text-soft);
+    margin-bottom: 7px;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    background: var(--panel-2);
+    color: white;
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 12px;
+    outline: none;
+}
+
+.form-group textarea {
+    min-height: 250px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: white;
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 800px) {
+
+    .header {
+        padding: 0 12px;
     }
 
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: #0b1329;
-      color: #e2e8f0;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
+    .header-search {
+        display: none;
     }
 
-    .card {
-      background-color: #1e293b;
-      border: 1px solid #334155;
-      border-radius: 16px;
-      padding: 28px;
-      width: 100%;
-      max-width: 400px;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    .main {
+        flex-direction: column;
     }
 
-    h2 {
-      font-size: 1.5rem;
-      text-align: center;
-      margin-bottom: 6px;
-      color: #ffffff;
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+        padding: 12px;
     }
 
-    p.subtitle {
-      font-size: 0.875rem;
-      color: #94a3b8;
-      text-align: center;
-      margin-bottom: 24px;
+    .folder-list {
+        flex-direction: row;
+        overflow-x: auto;
     }
 
-    .form-group {
-      margin-bottom: 16px;
+    .folder-item {
+        white-space: nowrap;
+        width: auto;
     }
 
-    label {
-      display: block;
-      font-size: 0.875rem;
-      font-weight: 500;
-      margin-bottom: 6px;
-      color: #cbd5e1;
+    .new-folder {
+        margin-top: 10px;
     }
 
-    .input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
+    .content {
+        padding: 16px;
     }
 
-    .prefix {
-      position: absolute;
-      left: 12px;
-      color: #64748b;
-      font-size: 0.95rem;
-      font-weight: 600;
-      pointer-events: none;
+    .content-header {
+        align-items: flex-start;
+        flex-direction: column;
     }
 
-    input {
-      width: 100%;
-      background-color: #0f172a;
-      border: 1px solid #334155;
-      border-radius: 8px;
-      padding: 12px 14px;
-      font-size: 1rem;
-      color: #ffffff;
-      outline: none;
-      transition: border-color 0.2s;
+    .content-actions {
+        width: 100%;
     }
 
-    input.has-prefix {
-      padding-left: 42px;
+    .content-actions button {
+        flex: 1;
     }
 
-    input:focus {
-      border-color: #3b82f6;
+    .toolbar {
+        flex-direction: column;
+        align-items: stretch;
     }
 
-    .btn-group {
-      display: flex;
-      gap: 10px;
-      margin-top: 20px;
+    .toolbar input {
+        max-width: none;
     }
 
-    button {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.2s;
+    .sort-select {
+        width: 100%;
     }
 
-    .btn-calculate {
-      background-color: #2563eb;
-      color: #ffffff;
+    .memo-list {
+        grid-template-columns: 1fr;
     }
-
-    .btn-calculate:hover {
-      background-color: #1d4ed8;
-    }
-
-    .btn-reset {
-      background-color: #334155;
-      color: #cbd5e1;
-    }
-
-    .btn-reset:hover {
-      background-color: #475569;
-    }
-
-    .result-box {
-      margin-top: 24px;
-      padding-top: 18px;
-      border-top: 1px solid #334155;
-      display: none;
-    }
-
-    .row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      font-size: 0.9rem;
-      color: #cbd5e1;
-    }
-
-    .total-row {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px dashed #334155;
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #38bdf8;
-    }
-  </style>
+}
+</style>
 </head>
+
 <body>
 
-  <div class="card">
-    <h2>Kalkulator Diskon</h2>
-    <p class="subtitle">Hitung potongan diskon dan pajak belanjaan</p>
+<div class="app">
 
-    <!-- Input Harga Asli -->
-    <div class="form-group">
-      <label for="displayPrice">Harga Asli (Rp)</label>
-      <div class="input-wrapper">
-        <span class="prefix">Rp</span>
-        <input type="text" id="displayPrice" class="has-prefix" placeholder="Misal: 50.000" inputmode="numeric" oninput="formatRupiahInput(this)">
-      </div>
+    <header class="header">
+
+        <div class="logo">
+            Memo
+        </div>
+
+        <div class="header-search">
+            <input
+                type="text"
+                id="globalSearch"
+                placeholder="Cari memo..."
+            >
+        </div>
+
+        <button
+            class="header-button"
+            onclick="openFolderModal()"
+        >
+            + Folder
+        </button>
+
+    </header>
+
+
+    <main class="main">
+
+        <aside class="sidebar">
+
+            <div class="sidebar-title">
+                FOLDER
+            </div>
+
+            <div
+                id="folderList"
+                class="folder-list"
+            ></div>
+
+            <button
+                class="new-folder"
+                onclick="openFolderModal()"
+            >
+                + Buat Folder
+            </button>
+
+        </aside>
+
+
+        <section class="content">
+
+            <div class="content-header">
+
+                <div
+                    id="contentTitle"
+                    class="content-title"
+                >
+                    Semua Memo
+                </div>
+
+                <div class="content-actions">
+
+                    <button
+                        class="secondary-button"
+                        onclick="openFolderModal()"
+                    >
+                        + Folder
+                    </button>
+
+                    <button
+                        class="primary-button"
+                        onclick="openMemoModal()"
+                    >
+                        + Memo Baru
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="toolbar">
+
+                <input
+                    type="text"
+                    id="memoSearch"
+                    placeholder="Cari di memo..."
+                >
+
+                <select
+                    id="sortSelect"
+                    class="sort-select"
+                >
+
+                    <option value="newest">
+                        Terbaru
+                    </option>
+
+                    <option value="oldest">
+                        Terlama
+                    </option>
+
+                    <option value="nameAsc">
+                        Nama A → Z
+                    </option>
+
+                    <option value="nameDesc">
+                        Nama Z → A
+                    </option>
+
+                    <option value="dateNewest">
+                        Tanggal terbaru
+                    </option>
+
+                    <option value="dateOldest">
+                        Tanggal terlama
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div
+                id="memoList"
+                class="memo-list"
+            ></div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- =========================
+     MEMO MODAL
+========================= -->
+
+<div
+    id="memoModal"
+    class="modal"
+>
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <div
+                id="memoModalTitle"
+                class="modal-title"
+            >
+                Memo Baru
+            </div>
+
+            <button
+                class="close-button"
+                onclick="closeMemoModal()"
+            >
+                ✕
+            </button>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Judul Memo
+            </label>
+
+            <input
+                id="memoTitle"
+                type="text"
+                placeholder="Judul memo..."
+            >
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Isi Memo
+            </label>
+
+            <textarea
+                id="memoContent"
+                placeholder="Tulis memo di sini..."
+            ></textarea>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Folder
+            </label>
+
+            <select id="memoFolder"></select>
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button
+                class="secondary-button"
+                onclick="closeMemoModal()"
+            >
+                Batal
+            </button>
+
+            <button
+                class="primary-button"
+                onclick="saveMemo()"
+            >
+                Simpan
+            </button>
+
+        </div>
+
     </div>
 
-    <!-- Input Diskon -->
-    <div class="form-group">
-      <label for="discount">Diskon (%)</label>
-      <input type="number" id="discount" placeholder="Misal: 15" min="0" max="100">
+</div>
+
+
+<!-- =========================
+     FOLDER MODAL
+========================= -->
+
+<div
+    id="folderModal"
+    class="modal"
+>
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <div class="modal-title">
+                Buat Folder
+            </div>
+
+            <button
+                class="close-button"
+                onclick="closeFolderModal()"
+            >
+                ✕
+            </button>
+
+        </div>
+
+
+        <div class="form-group">
+
+            <label>
+                Nama Folder
+            </label>
+
+            <input
+                id="folderName"
+                type="text"
+                placeholder="Contoh: Project"
+            >
+
+        </div>
+
+
+        <div class="modal-footer">
+
+            <button
+                class="secondary-button"
+                onclick="closeFolderModal()"
+            >
+                Batal
+            </button>
+
+            <button
+                class="primary-button"
+                onclick="saveFolder()"
+            >
+                Buat Folder
+            </button>
+
+        </div>
+
     </div>
 
-    <!-- Input Pajak / PPN -->
-    <div class="form-group">
-      <label for="tax">Pajak / PPN (%) <span style="font-size: 0.75rem; color: #64748b;">(Opsional)</span></label>
-      <input type="number" id="tax" placeholder="Misal: 11" min="0" value="0">
-    </div>
+</div>
 
-    <div class="btn-group">
-      <button class="btn-reset" onclick="resetForm()">Reset</button>
-      <button class="btn-calculate" onclick="hitungSemua()">Hitung Total</button>
-    </div>
 
-    <!-- Bagian Hasil Hitung -->
-    <div class="result-box" id="resultArea">
-      <div class="row">
-        <span>Harga Awal:</span>
-        <span id="resOriginal">Rp 0</span>
-      </div>
-      <div class="row">
-        <span>Potongan Diskon:</span>
-        <span id="resDiscount" style="color: #4ade80;">- Rp 0</span>
-      </div>
-      <div class="row">
-        <span>Pajak Tambahan:</span>
-        <span id="resTax" style="color: #f87171;">+ Rp 0</span>
-      </div>
-      <div class="total-row">
-        <span>Total Bayar:</span>
-        <span id="resTotal">Rp 0</span>
-      </div>
-    </div>
-  </div>
+<script>
 
-  <script>
-    // Fungsi agar saat mengetik harga otomatis muncul titik ribuan
-    function formatRupiahInput(input) {
-      let angka = input.value.replace(/[^0-9]/g, '');
-      if (!angka) {
-        input.value = '';
+/* =========================================
+   DATA
+========================================= */
+
+let folders = JSON.parse(
+    localStorage.getItem("memoFolders")
+) || [
+    {
+        id: "all",
+        name: "Semua Memo"
+    },
+    {
+        id: "general",
+        name: "Umum"
+    }
+];
+
+let memos = JSON.parse(
+    localStorage.getItem("memoData")
+) || [];
+
+let currentFolder = "all";
+let editingMemoId = null;
+
+
+/* =========================================
+   SAVE DATA
+========================================= */
+
+function saveData() {
+
+    localStorage.setItem(
+        "memoFolders",
+        JSON.stringify(folders)
+    );
+
+    localStorage.setItem(
+        "memoData",
+        JSON.stringify(memos)
+    );
+
+}
+
+
+/* =========================================
+   FOLDER
+========================================= */
+
+function renderFolders() {
+
+    const list = document.getElementById("folderList");
+
+    list.innerHTML = "";
+
+    folders.forEach(folder => {
+
+        const button = document.createElement("button");
+
+        button.className =
+            "folder-item" +
+            (currentFolder === folder.id
+                ? " active"
+                : "");
+
+        button.textContent =
+            folder.name;
+
+        button.onclick = () => {
+
+            currentFolder = folder.id;
+
+            renderFolders();
+            renderMemos();
+
+        };
+
+        list.appendChild(button);
+
+    });
+
+}
+
+
+function openFolderModal() {
+
+    document
+        .getElementById("folderModal")
+        .classList.add("show");
+
+    document
+        .getElementById("folderName")
+        .value = "";
+
+    setTimeout(() => {
+
+        document
+            .getElementById("folderName")
+            .focus();
+
+    }, 100);
+
+}
+
+
+function closeFolderModal() {
+
+    document
+        .getElementById("folderModal")
+        .classList.remove("show");
+
+}
+
+
+function saveFolder() {
+
+    const name =
+        document
+        .getElementById("folderName")
+        .value
+        .trim();
+
+    if (!name) {
+
+        alert("Nama folder belum diisi.");
+
         return;
-      }
-      input.value = new Intl.NumberFormat('id-ID').format(angka);
+
     }
 
-    function ambilAngkaMurni(text) {
-      return parseFloat(text.replace(/\./g, '')) || 0;
-    }
+    const exists = folders.some(
+        folder =>
+            folder.name.toLowerCase() ===
+            name.toLowerCase()
+    );
 
-    function hitungSemua() {
-      const hargaAsli = ambilAngkaMurni(document.getElementById('displayPrice').value);
-      const diskonPersen = parseFloat(document.getElementById('discount').value) || 0;
-      const pajakPersen = parseFloat(document.getElementById('tax').value) || 0;
+    if (exists) {
 
-      if (hargaAsli <= 0) {
-        alert('Harap masukkan harga asli terlebih dahulu!');
+        alert("Folder tersebut sudah ada.");
+
         return;
-      }
 
-      // 1. Hitung potongan diskon
-      const nominalDiskon = hargaAsli * (diskonPersen / 100);
-      const hargaSetelahDiskon = hargaAsli - nominalDiskon;
-
-      // 2. Hitung pajak dari harga yang sudah didiskon
-      const nominalPajak = hargaSetelahDiskon * (pajakPersen / 100);
-
-      // 3. Hitung total akhir
-      const totalBayar = hargaSetelahDiskon + nominalPajak;
-
-      // Format ke tampilan Rupiah
-      const formatRupiah = (val) => 'Rp ' + Math.round(val).toLocaleString('id-ID');
-
-      document.getElementById('resOriginal').innerText = formatRupiah(hargaAsli);
-      document.getElementById('resDiscount').innerText = '- ' + formatRupiah(nominalDiskon);
-      document.getElementById('resTax').innerText = '+ ' + formatRupiah(nominalPajak);
-      document.getElementById('resTotal').innerText = formatRupiah(totalBayar);
-
-      document.getElementById('resultArea').style.display = 'block';
     }
 
-    function resetForm() {
-      document.getElementById('displayPrice').value = '';
-      document.getElementById('discount').value = '';
-      document.getElementById('tax').value = '0';
-      document.getElementById('resultArea').style.display = 'none';
+    folders.push({
+
+        id:
+            "folder-" +
+            Date.now(),
+
+        name: name
+
+    });
+
+    saveData();
+
+    closeFolderModal();
+
+    renderFolders();
+
+    updateFolderSelect();
+
+}
+
+
+/* =========================================
+   MEMO MODAL
+========================================= */
+
+function openMemoModal(id = null) {
+
+    editingMemoId = id;
+
+    updateFolderSelect();
+
+    if (id) {
+
+        const memo =
+            memos.find(
+                item => item.id === id
+            );
+
+        if (!memo) return;
+
+        document
+            .getElementById("memoModalTitle")
+            .textContent = "Edit Memo";
+
+        document
+            .getElementById("memoTitle")
+            .value = memo.title;
+
+        document
+            .getElementById("memoContent")
+            .value = memo.content;
+
+        document
+            .getElementById("memoFolder")
+            .value = memo.folderId;
+
+    } else {
+
+        document
+            .getElementById("memoModalTitle")
+            .textContent = "Memo Baru";
+
+        document
+            .getElementById("memoTitle")
+            .value = "";
+
+        document
+            .getElementById("memoContent")
+            .value = "";
+
+        document
+            .getElementById("memoFolder")
+            .value =
+                currentFolder === "all"
+                    ? "general"
+                    : currentFolder;
+
     }
-  </script>
-</body>
-</html>
+
+    document
+        .getElementById("memoModal")
+        .classList.add("show");
+
+    setTimeout(() => {
+
+        document
+            .getElementById("memoTitle")
+            .focus();
+
+    }, 100);
+
+}
+
+
+function closeMemoModal() {
+
+    document
+        .getElementById("memoModal")
+        .classList.remove("show");
+
+    editingMemoId = null;
+
+}
+
+
+/* =========================================
+   FOLDER SELECT
+========================================= */
+
+function updateFolderSelect() {
+
+    const select =
+        document.getElementById(
+            "memoFolder"
+        );
+
+    select.innerHTML = "";
+
+    folders
+        .filter(folder =>
+            folder.id !== "all"
+        )
+        .forEach(folder => {
+
+            const option =
+                document.createElement("option");
+
+            option.value = folder.id;
+            option.textContent = folder.name;
+
+            select.appendChild(option);
+
+        });
+
+}
+
+
+/* =========================================
+   SAVE MEMO
+========================================= */
+
+function saveMemo() {
+
+    const title =
+        document
+        .getElementById("memoTitle")
+        .value
+        .trim();
+
+    const content =
+        document
+        .getElementById("memoContent")
+        .value
+        .trim();
+
+    const folderId =
+        document
+        .getElementById("memoFolder")
+        .value;
+
+    if (!title) {
+
+        alert("Judul memo belum diisi.");
+
+        return;
+
+    }
+
+    if (!content) {
+
+        alert("Isi memo belum diisi.");
+
+        return;
+
+    }
+
+
+    if (editingMemoId) {
+
+        const memo =
+            memos.find(
+                item =>
+                    item.id ===
+                    editingMemoId
+            );
+
+        if (memo) {
+
+            memo.title = title;
+            memo.content = content;
+            memo.folderId = folderId;
+            memo.updatedAt =
+                new Date().toISOString();
+
+        }
+
+    } else {
+
+        memos.push({
+
+            id:
+                "memo-" +
+                Date.now(),
+
+            title: title,
+
+            content: content,
+
+            folderId: folderId,
+
+            pinned: false,
+
+            createdAt:
+                new Date().toISOString(),
+
+            updatedAt:
+                new Date().toISOString()
+
+        });
+
+    }
+
+    saveData();
+
+    closeMemoModal();
+
+    renderMemos();
+
+}
+
+
+/* =========================================
+   RENDER MEMOS
+========================================= */
+
+function renderMemos() {
+
+    const container =
+        document.getElementById(
+            "memoList"
+        );
+
+    const title =
+        document.getElementById(
+            "contentTitle"
+        );
+
+    const search =
+        document.getElementById(
+            "memoSearch"
+        )
+        .value
+        .toLowerCase()
+        .trim();
+
+
+    let visibleMemos =
+        [...memos];
+
+  
